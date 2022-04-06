@@ -1,6 +1,10 @@
-# PortfoliOSS Reproduction
+# PortfoliOSS Issue Reproduction
 
-## 1: Container
+## Download DB Backup file
+
+https://1drv.ms/u/s!AuaqsrDoMOUHobUtbEyYe2iDCnVHRQ?e=UKb2Mf
+
+## Add Containers
 
 SQL DB for persistence (modify the volume to point to the data file directory):
 
@@ -14,7 +18,7 @@ Seq for logging:
 docker run -p:5342:80 -p 5341:5341 -e "ACCEPT_EULA=Y" --name seq -d datalust/seq:latest
 ```
 
-## 2: Create & Restore DB
+## Create & Restore DB
 
 * Connect to the DB
 * Execute the below scripts
@@ -28,4 +32,4 @@ USE [master]
 RESTORE DATABASE [portfolioss] FROM  DISK = N'/mnt/portfolioss_backup/master-202246-11-21-27.bak' WITH REPLACE, NOUNLOAD,  STATS = 5
 ```
 
-## 3: Run the app
+## Run the app
