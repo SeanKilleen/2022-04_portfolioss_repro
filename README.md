@@ -6,7 +6,7 @@ https://1drv.ms/u/s!AuaqsrDoMOUHobUtbEyYe2iDCnVHRQ?e=UKb2Mf
 
 ## Add Containers
 
-SQL DB for persistence (modify the volume to point to the data file directory):
+SQL DB for persistence (modify the volume to point to the data file directory where you're storing the backup -- in the below example, `C:\DockerData\portfolioss`):
 
 ```cmd
 docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=yourStrong(!)Password" --name portfolioss -p 1433:1433 -v C:\DockerData\portfolioss:/mnt/portfolioss_backup -d mcr.microsoft.com/mssql/server:2019-latest
