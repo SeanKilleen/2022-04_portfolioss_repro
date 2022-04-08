@@ -1,4 +1,5 @@
-﻿using Akka.Actor;
+﻿using System;
+using Akka.Actor;
 using Serilog;
 using System.IO;
 using Akka.Persistence.Query;
@@ -41,12 +42,29 @@ namespace PortfoliOSS.ModernConsole
             var readJournal = PersistenceQuery.Get(actorSystem)
                 .ReadJournalFor<SqlReadJournal>("akka.persistence.query.my-read-journal");
             var materializer = actorSystem.Materializer();
-            Log.Logger.Information("Trying to stream the events");
-            readJournal.AllEvents(Offset.NoOffset()).RunForeach(env => writer.Tell(env), materializer);
+            
+            logger.Information("Trying to stream the events");
+            readJournal.CurrentAllEvents(new Sequence(1289878)).RunForeach(ev =>
+            {
+                writer.Tell(ev);
+            }, materializer).ContinueWith(task =>
+            {
+                if (task.IsFaulted)
+                {
+                    // TODO: add error handling here
+                    logger.Error(task.Exception, "STREAM FAILED"); 
+                } else if (task.IsCanceled)
+                {
+                    logger.Warning("Stream canceled!"); 
+                }
+                else
+                {
+                    logger.Information("Stream ended successfully");
+                }
+                actorSystem.Terminate();
+            });
 
             await actorSystem.WhenTerminated;
-
-            await host.RunAsync();
         }
     }
 }
